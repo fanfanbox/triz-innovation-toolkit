@@ -1,0 +1,63 @@
+# ============================================================
+# Copyrighted source material — DO NOT COMMIT
+# These are the original PDF/EPUB books used as reference.
+# They remain on the author's local filesystem only.
+# ============================================================
+ebook_Triz/
+*.epub
+*.pdf
+
+# ============================================================
+# Extracted text files (intermediate artifacts, not distributable)
+# ============================================================
+**/extracted/
+
+# ============================================================
+# OS generated files
+# ============================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ============================================================
+# Editor / IDE files
+# ============================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# ============================================================
+# Python (extraction scripts are one-off tools)
+# ============================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+.eggs/
+
+# ============================================================
+# Temporary files
+# ============================================================
+*.tmp
+*.temp
+*.log
+*.bak
+*~
+~$*
+
+# ============================================================
+# Node / Build artifacts (future-proofing)
+# ============================================================
+node_modules/
+build/
