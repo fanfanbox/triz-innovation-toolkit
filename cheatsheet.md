@@ -151,7 +151,7 @@ Problem? ──┬── Already a contradiction? ──→ Contradiction Matrix
 
 ## The Ideality Equation
 
-$$\text{Ideality} = \frac{\sum \text{Benefits (Useful Functions)}}{\sum \text{Costs} + \sum \text{Harms (Harmful Functions)}}$$
+**Ideality = Σ Benefits (Useful Functions) / (Σ Costs + Σ Harms (Harmful Functions))**
 
 **Business Ideality** = Σ Customer Value / (Σ Costs + Σ Harms)
 

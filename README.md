@@ -17,7 +17,7 @@
 
 **TRIZ** 是"发明问题解决理论"——一种通过分析数百万专利中提取的创新模式，系统化解决工程和商业问题的方法论。由 Genrich Altshuller 于 1946 年创建，TRIZ 用原则驱动的问题解决方式取代了试错法。
 
-$$\text{Ideality} = \frac{\sum \text{Benefits}}{\sum \text{Costs} + \sum \text{Harms}}$$
+**Ideality = Σ Benefits / (Σ Costs + Σ Harms)**
 
 **The North Star of TRIZ**: maximize useful functions while driving costs and harms toward zero.
 
