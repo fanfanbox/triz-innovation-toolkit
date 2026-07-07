@@ -8,6 +8,11 @@ ebook_Triz/
 *.pdf
 
 # ============================================================
+# Generated outputs (reports, slide decks — not source material)
+# ============================================================
+report/
+
+# ============================================================
 # Extracted text files (intermediate artifacts, not distributable)
 # ============================================================
 **/extracted/

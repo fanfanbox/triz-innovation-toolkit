@@ -33,6 +33,7 @@ Comprehensive TRIZ toolkit synthesized from 8 authoritative sources:
 | `cheatsheet.md` | Quick-reference tables: 39 Parameters, top contradictions, routing flowchart, tool selector, ARIZ steps, AFI checklist, I-S Matrix, Business Principles, MATRIZ levels | During problem-solving — fast lookups without reading full chapters |
 | `patterns.md` | Complete pattern catalog: 40 Principles (detailed), 8 Trends (stage strategies), 76 Standards (5 classes), ARIZ 5-Step, AFI 4-Step, 12 Double Business Principles, 5 Thinking Components, 10-Step Innovation Process, Implementation Pipeline, CAI Categories, MATRIZ Levels, TRIZ Maturity Model | When applying a specific pattern and need sub-steps, stage details, or implementation guidance |
 | `glossary.md` | A-Z definitions of every TRIZ term from all 8 source books, with chapter cross-references | When encountering an unfamiliar term or verifying precise definitions |
+| `report/` | Generated TRIZ analysis reports (Markdown) + auto-generated design PPTs (via NotebookLM) | After completing a TRIZ analysis — reports and slide decks are saved here |
 
 ## When to Use This Skill
 
@@ -319,6 +320,158 @@ Turn "How to make this safe?" into "How to make this fail catastrophically?" —
 | Corporate Training | — | ✓✓✓ | — | — | — | — | — |
 
 ✓✓✓ = Comprehensive coverage, ✓✓ = Good coverage, ✓ = Brief mention, — = Not covered
+
+## Report Generation & PPT Delivery (NotebookLM Integration)
+
+After every TRIZ analysis or problem-solving session, produce a comprehensive report AND a presentation-ready slide deck.
+
+### Step 1: Save the TRIZ Report
+
+All generated reports go to the `report/` subdirectory:
+
+```
+C:\01_JianWANG\01_Projects\Skills\Triz\report\<topic-slug>.md
+```
+
+The report should be a well-structured Markdown file containing:
+- Problem statement and context
+- TRIZ tools applied and why
+- Key findings, contradictions resolved, and solution concepts
+- Visual descriptions (diagrams, tables, matrices)
+- Recommendations and next steps
+
+### Step 2: Generate Design PPT via NotebookLM
+
+Once the report Markdown file is saved, **automatically invoke the `qiaomu-anything-to-notebooklm` skill** to produce a professional slide deck. The skill accepts local Markdown files directly — no format conversion needed.
+
+**Workflow:**
+
+1. **Invoke the NotebookLM skill** — use natural language: "将这份TRIZ报告生成一份设计PPT"
+2. **The NotebookLM skill executes these commands internally:**
+   ```
+   notebooklm source add "<absolute-path-to-report>.md"
+   notebooklm generate slide-deck
+   artifact wait <task_id>
+   download slide-deck "./report/<topic-slug>-ppt.pdf"
+   ```
+3. **Output** — PPT/PDF saved to `report/` alongside the original report
+
+**Prerequisites:**
+- `notebooklm login` must be completed before first use (one-time setup)
+- Generation time: typically 1–3 minutes for PPT
+- NotebookLM skill version: v1.0.0+ (recommended)
+
+**Natural-language triggers (mapped by the NotebookLM skill):**
+- "做成PPT" / "生成幻灯片" / "生成设计PPT" → `slide-deck` → `notebooklm generate slide-deck`
+
+### Step 3: Confirm Delivery
+
+After generation, confirm both outputs to the user:
+
+```
+✅ TRIZ Report: report/<topic-slug>.md
+✅ Design PPT:  report/<topic-slug>-ppt.pdf
+```
+
+### Important Rules
+
+- **Automatic chaining** — whenever a TRIZ report is generated and saved to `report/`, immediately chain into the NotebookLM skill. Do NOT wait for the user to ask.
+- **Login check** — if `notebooklm login` has not been completed, remind the user to run it first, then deliver the report alone (PPT can be generated later).
+- **Long reports** — for very long reports (>50 pages), consider generating a condensed "executive summary" version for the PPT to keep slide count manageable.
+- **File naming** — the PPT filename should match the report slug with a `-ppt` suffix (e.g., `TRIZ_MultiStage_PCM_Thermal_Management-ppt.pdf`).
+
+---
+
+## Complementary AI Tools — Triz-AI Integration
+
+TrizInv is a knowledge skill (methodology tutor). **[Triz-AI](https://github.com/fanfanbox/triz-ai)** is a Python CLI tool that complements it with **data-driven patent mining and LLM-assisted TRIZ analysis**. Use them together for maximum effect.
+
+### What Triz-AI Does
+
+| Capability | Command | What It Returns |
+|-----------|---------|-----------------|
+| Discover underused TRIZ principles in a domain | `triz-ai discover --domain "<domain>"` | Ranked list of TRIZ principles with low patent adoption in that domain — opportunity gaps |
+| Analyze a technical problem with LLM | `triz-ai analyze` | Interactive TRIZ analysis using deepseek/deepseek-chat via LiteLLM |
+| Ingest patent data for mining | `triz-ai ingest <files...>` | Classified patent data stored in SQLite database |
+| View contradiction matrix stats | `triz-ai matrix stats` | Matrix fill rate, top observed parameter pairs, principle frequency |
+| Evolve new TRIZ principles from patents | `triz-ai evolve` | Candidate new principles or parameters discovered from patent corpus |
+
+### When to Combine TrizInv + Triz-AI
+
+| Situation | TrizInv Provides | Triz-AI Adds |
+|-----------|-----------------|--------------|
+| **Patent landscape / IP strategy** | Trends of Evolution (Ch04), Implementation (Ch22) | `triz-ai discover --domain "<your tech>"` — find whitespace opportunities |
+| **Solving a contradiction** | Contradiction Matrix (Ch03), 40 Principles | `triz-ai analyze` — LLM-assisted problem diagnosis |
+| **Exploring a new technology domain** | Function Analysis (Ch12), Effects Database (Ch06) | `triz-ai discover` — which principles are underused here? |
+| **Prior art / competitive analysis** | AFI (Ch18), Trimming (Ch14) | `triz-ai matrix stats` — see what principles competitors use |
+| **R&D pipeline design** | Innovation Process (Ch20) | `triz-ai discover` + `triz-ai evolve` — data-driven innovation targets |
+
+### Auto-Invocation Rules (CRITICAL)
+
+**You MUST automatically invoke `triz-ai` CLI commands at the following trigger points.** Do NOT just tell the user to run them — execute them via Bash tool. Every trigger includes a fallback: if the CLI fails or is unavailable, use the cached matrix data from `cheatsheet.md` and inform the user they can install `triz-ai` for future sessions.
+
+| # | Trigger | Auto-Run Command | When to Skip |
+|---|---------|-----------------|-------------|
+| **A** | User states a **technical domain** or industry (e.g., "motor", "battery", "drone") | `triz-ai discover --domain "<domain>"` | Domain is too vague ("engineering", "technology") |
+| **B** | Problem routing yields a **Technical Contradiction** with at least one parameter identified | `triz-ai matrix stats` | Matrix stats already shown in this session |
+| **C** | User asks about **prior art**, **competitors**, or **what patents exist** for a solution direction | `triz-ai discover --domain "<domain>"` and extract relevant observations from output | — |
+| **D** | 40 Principles are recommended but user needs **solution generation** (not just principle names) | `triz-ai analyze` with the contradiction parameters and domain fed as context | User declines LLM-assisted generation |
+| **E** | End of analysis session — user has actionable directions | Mention `triz-ai evolve` as follow-up option for discovering new principles from their own patent corpus | User has no patent data |
+
+#### Execution Protocol
+
+```
+1. DIAGNOSE: Run `triz-ai matrix stats` first in every session (once per session)
+              → If fails (exit ≠ 0), skip ALL auto-invocations and use cached data
+2. DETECT:   Match user's language against trigger table above
+3. EXECUTE:  Run the corresponding triz-ai command via Bash
+4. INTEGRATE: Feed Triz-AI output back into TrizInv analysis:
+              - discovery results → narrow principle selection
+              - matrix stats → validate contradiction parameter choice
+              - analyze output → enrich solution generation
+```
+
+#### Fallback Hierarchy
+
+If `triz-ai` is not installed or fails:
+
+1. **`discover` unavailable** → Use `patterns.md` principle frequency data + your knowledge of patent trends in the domain
+2. **`matrix stats` unavailable** → Use the contradiction matrix in `cheatsheet.md` (static 39×39 matrix with 40 principles per cell)
+3. **`analyze` unavailable** → Generate solutions purely from TrizInv's methodology (S-Field, Trends, Effects Database, ARIZ)
+4. Always tell the user: *"triz-ai CLI not available — using cached TRIZ data. Install with `pip install triz-ai` for live patent mining."*
+
+### Recommended Workflow (with Auto-Invocation)
+
+```
+Session Start
+  └─ [AUTO: triz-ai matrix stats] ← runs once, validates CLI availability
+      │
+User states problem → TrizInv Problem Routing (contradiction type?)
+  │
+  ├─ Technical Contradiction detected
+  │   ├─ [AUTO: triz-ai matrix stats] ← confirms parameter pair has patent data
+  │   └─ TrizInv: Apply 40 Principles from contradiction matrix
+  │       └─ [AUTO: triz-ai discover --domain "..."] ← find whitespace
+  │       └─ [AUTO: triz-ai analyze] ← if user wants LLM synthesis
+  │
+  ├─ Physical Contradiction detected
+  │   └─ TrizInv: Apply Separation Principles (Time/Space/Condition/System-level)
+  │       └─ [AUTO: triz-ai discover] ← domain-specific principle gaps
+  │
+  └─ New domain exploration
+      └─ [AUTO: triz-ai discover --domain "..."] ← mandatory trigger A
+      └─ TrizInv: Function Analysis + Effects Database
+
+Session End
+  └─ TrizInv: Ideality evaluation, document in report/
+  └─ Mention: `triz-ai evolve` if user has patent corpus to analyze
+```
+
+**Prerequisites:** `triz-ai` must be installed (`pip install triz-ai`). LLM backend: deepseek/deepseek-chat via LiteLLM. Embeddings: Ollama `nomic-embed-text`. Auto-invocation degrades gracefully if unavailable.
+
+> **Note:** Triz-AI and TrizInv are fundamentally different tools that cannot be merged — one is a knowledge skill loaded into LLM context, the other is a standalone Python CLI program. They complement each other: TrizInv answers "how to think about innovation problems," Triz-AI answers "what do patents tell us about this domain?" The automation rules above bridge them: the Skill drives the CLI at the right moments.
+
+---
 
 ## How to Use This Skill
 
