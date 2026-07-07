@@ -1,0 +1,11 @@
+# Auto detect text files and normalize to LF in repo
+* text=auto
+
+# Markdown files always LF
+*.md text eol=lf
+
+# Shell scripts always LF
+*.sh text eol=lf
+
+# Python scripts always LF
+*.py text eol=lf
