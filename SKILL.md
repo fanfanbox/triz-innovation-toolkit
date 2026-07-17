@@ -538,7 +538,7 @@ After every TRIZ analysis or problem-solving session, produce a comprehensive re
 All generated reports go to the `report/` subdirectory:
 
 ```
-C:\01_JianWANG\01_Projects\Skills\Triz\report\<topic-slug>.md
+report/<topic-slug>.md
 ```
 
 The report should be a well-structured Markdown file containing:

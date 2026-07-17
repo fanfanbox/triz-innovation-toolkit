@@ -23,7 +23,7 @@
 ### Task 1: 添加路径推荐网关区块
 
 **Files:**
-- Modify: `C:\01_JianWANG\01_Projects\Skills\Triz\SKILL.md` — 在 `## When to Use This Skill` 之前插入新章节
+- Modify: `SKILL.md` — 在 `## When to Use This Skill` 之前插入新章节
 
 **Interfaces:**
 - Consumes: 无（首任务）
@@ -86,7 +86,7 @@
 ### Task 2: 添加收敛型 — TRIZ 教练区块
 
 **Files:**
-- Modify: `C:\01_JianWANG\01_Projects\Skills\Triz\SKILL.md` — 在放射型区块之后插入（放射型区块在 Task 3 中添加）
+- Modify: `SKILL.md` — 在放射型区块之后插入（放射型区块在 Task 3 中添加）
 
 > **注意：** Tasks 2 和 3 按顺序执行。收敛型放在放射型之后，因为收敛型的终点是转入放射型，读者先理解放射型再理解收敛型的完整流程更自然。
 
@@ -222,7 +222,7 @@
 ### Task 3: 添加放射型 — TRIZ 分析师区块
 
 **Files:**
-- Modify: `C:\01_JianWANG\01_Projects\Skills\Triz\SKILL.md` — 在路径推荐网关之后、收敛型区块之前插入
+- Modify: `SKILL.md` — 在路径推荐网关之后、收敛型区块之前插入
 
 **Interfaces:**
 - Consumes: Task 1 的路径推荐网关（网关推荐放射型时激活此人格），现有 Problem Routing + 6-step 流程（不做修改，作为放射型的执行引擎）
@@ -316,7 +316,7 @@
 ### Task 4: 修改 Triz-AI 集成区块 — 从触发条件改为全局必选项
 
 **Files:**
-- Modify: `C:\01_JianWANG\01_Projects\Skills\Triz\SKILL.md` — 修改 `## Complementary AI Tools — Triz-AI Integration` 章节
+- Modify: `SKILL.md` — 修改 `## Complementary AI Tools — Triz-AI Integration` 章节
 
 **Interfaces:**
 - Consumes: Task 1/2/3 的路径系统（两路都引用此必选项规则）
@@ -421,7 +421,7 @@ Session Start
 ### Task 5: 更新 Skill File Structure 表格
 
 **Files:**
-- Modify: `C:\01_JianWANG\01_Projects\Skills\Triz\SKILL.md` — 在顶部的 Skill File Structure 表格中提及 PATH SELECTION 章节
+- Modify: `SKILL.md` — 在顶部的 Skill File Structure 表格中提及 PATH SELECTION 章节
 
 **Interfaces:**
 - Consumes: Task 1-4 的所有修改
@@ -450,7 +450,7 @@ Session Start
 ### Task 6: 全文件一致性检查
 
 **Files:**
-- Verify: `C:\01_JianWANG\01_Projects\Skills\Triz\SKILL.md`
+- Verify: `SKILL.md`
 
 **检查项：**
 
@@ -506,12 +506,12 @@ Session Start
 ### Task 7: 提交变更
 
 **Files:**
-- Commit: `C:\01_JianWANG\01_Projects\Skills\Triz\SKILL.md`
+- Commit: `SKILL.md`
 
 - [ ] **Step 1: 查看 git diff**
 
 ```bash
-cd C:\01_JianWANG\01_Projects\Skills\Triz
+cd .
 git diff SKILL.md
 ```
 
@@ -520,7 +520,7 @@ git diff SKILL.md
 - [ ] **Step 2: 暂存并提交**
 
 ```bash
-cd C:\01_JianWANG\01_Projects\Skills\Triz
+cd .
 git add SKILL.md
 git commit -m "feat: add path selection gateway + dual-persona (Radial analyst / Convergent coach)
 
@@ -536,6 +536,6 @@ All existing Problem Routing, 6-step process, chapter references preserved."
 - [ ] **Step 3: 推送到远程（如适用）**
 
 ```bash
-cd C:\01_JianWANG\01_Projects\Skills\Triz
+cd .
 git push origin main
 ```
