@@ -5,9 +5,9 @@
 [![Tools](https://img.shields.io/badge/TRIZ%20Tools-22-orange)](#whats-inside--内容概览)
 [![Platform](https://img.shields.io/badge/Platform-Claude%20Code%20%7C%20Copilot%20CLI%20%7C%20Amp-green)]()
 
-> **A comprehensive TRIZ systematic innovation skill for AI coding agents — 24 chapters, 22 tools, synthesized from 8 authoritative sources.**
+> **A comprehensive TRIZ systematic innovation skill for AI coding agents — intelligent dual-path problem solving (Radial analyst / Convergent coach), 24 chapters, 22 tools, synthesized from 8 authoritative sources.**
 >
-> **面向 AI 编程助手的 TRIZ 系统创新技能包 — 24 章、22 种工具，源自 8 本权威著作。**
+> **面向 AI 编程助手的 TRIZ 系统创新技能包 — 智能双路径问题解决（放射型分析 / 收敛型教练），24 章、22 种工具，源自 8 本权威著作。**
 
 ---
 
@@ -29,7 +29,7 @@
 
 | File / 文件 | Purpose / 用途 | Lines |
 |-------------|---------------|-------|
-| [`SKILL.md`](./SKILL.md) | Entry point — YAML frontmatter, problem routing, tool selector, chapter index | 338 |
+| [`SKILL.md`](./SKILL.md) | Entry point — path selection gateway (Radial/Convergent), dual-persona prompts, problem routing, tool selector, chapter index | 338 |
 | [`cheatsheet.md`](./cheatsheet.md) | Quick-reference: 39 parameters, top contradictions, routing flowchart, checklists | 349 |
 | [`patterns.md`](./patterns.md) | Full pattern catalog: 40 Principles, 8 Trends, 76 Standards, ARIZ, AFI | 251 |
 | [`glossary.md`](./glossary.md) | A-Z term definitions from all 8 source books | 197 |
@@ -101,6 +101,36 @@ cp -r triz-innovation-toolkit ~/.copilot/skills/triz/
 git clone https://github.com/fanfanbox/triz-innovation-toolkit.git
 cp -r triz-innovation-toolkit ~/.agents/skills/triz/
 ```
+
+---
+
+## Problem Solving Paths / 问题解决路径
+
+The skill now features an intelligent **path selection gateway** that recommends the optimal problem-solving approach based on your problem description.
+
+本技能现配备智能**路径选择网关**，根据您的问题描述自动推荐最优解决路径。
+
+### Two Paths / 两条路径
+
+| | Radial / 放射型 | Convergent / 收敛型 |
+|---|---|---|
+| **Persona / 人格** | TRIZ Analyst / TRIZ 分析师 | TRIZ Coach / TRIZ 教练 |
+| **Mode / 模式** | One-shot, fully automated / 一次输入，全自动 | Multi-turn Socratic dialogue / 多轮苏格拉底式对话 |
+| **Best for / 适用** | Clear problem boundaries, experienced users / 问题边界清晰、有经验用户 | Fuzzy problems, new domains, need alignment / 问题模糊、新领域、需对齐认知 |
+| **Output / 产出** | Complete analysis report / 完整分析报告 | Problem definition document + execution roadmap → report / 问题定义书 + 执行路线图 → 报告 |
+| **User effort / 用户投入** | Low (initial input + review) / 低 | High (dialogue co-creation) / 高 |
+
+### Gateway Logic / 网关逻辑
+
+The gateway evaluates your problem against three criteria: **clear problem boundaries + explicit core contradiction + known constraints**. If all three are met, it recommends the fast Radial path; otherwise it suggests the Convergent coach to refine the problem definition first.
+
+网关通过三个条件评估您的问题：**问题边界清晰 + 核心矛盾明确 + 约束条件已知**。三项全满足则推荐快速放射路径；否则，系统会建议收敛型教练路径，先帮助您完善问题定义。
+
+### Mandatory Triz-AI / 必经节点：专利挖掘
+
+**Both paths converge at the Triz-AI patent mining node** — an automatic patent landscape search that enriches your analysis with competitive intelligence and technology trends before the final report is generated.
+
+**两条路径最终汇聚于 Triz-AI 专利挖掘节点**——在生成最终报告之前，系统会自动搜索专利领域现状，为您的分析提供竞争情报和技术趋势洞察。
 
 ---
 
