@@ -984,9 +984,40 @@ pandoc "TRIZ_报告_<课题名称>_完整版.md" \
 ### 检查清单
 
 - [ ] Markdown 文件已生成
-- [ ] Word 文件已生成
-- [ ] Word 文件格式正确（表格、标题、列表）
-- [ ] 两种文件内容一致
+- [ ] Word 文件已生成（含封面页、三级目录、章节分页）
+- [ ] PDF 文件已生成
+- [ ] Word/PDF 文件格式正确（表格、标题、列表）
+- [ ] 三种文件内容一致
+
+### Word 文档特性
+
+| 特性 | 说明 |
+|------|------|
+| **封面页** | 包含报告标题、副标题、日期 |
+| **目录页** | 三级目录，可链接到正确章节位置 |
+| **章节分页** | 一级标题前自动分页 |
+| **表格样式** | 带边框，表头深蓝底白字，交替行颜色 |
+| **页边距** | 上下2.54cm，左右3.18cm |
+
+### PDF 转换
+
+使用 docx2pdf 将 Word 转换为 PDF：
+
+```bash
+# 需要安装 docx2pdf
+pip install docx2pdf
+
+# 转换单个文件
+python -c "from docx2pdf import convert; convert('report.docx', 'report.pdf')"
+
+# 批量转换
+python -c "
+from docx2pdf import convert
+import glob
+for f in glob.glob('TRIZ_*_完整版.docx'):
+    convert(f, f.replace('.docx', '.pdf'))
+"
+```
 
 ---
 
