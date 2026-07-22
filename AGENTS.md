@@ -964,7 +964,6 @@ pandoc "TRIZ_报告_<课题名称>_完整版.md" \
   --from markdown \
   --to docx \
   --metadata title="TRIZ 系统化创新分析报告" \
-  --metadata author="王健 博士" \
   --metadata date="$(date '+%Y年%m月%d日')" \
   --metadata subject="TRIZ Innovation Analysis" \
   --metadata keywords="TRIZ, 创新, 电机设计, 专利分析"
@@ -975,8 +974,6 @@ pandoc "TRIZ_报告_<课题名称>_完整版.md" \
 | 元素 | 格式要求 |
 |------|----------|
 | **标题** | 居中，加粗，字号18-24pt |
-| **作者** | 王健 博士 |
-| **日期** | 自动生成当前日期 |
 | **一级标题** | 左对齐，加粗，字号16pt |
 | **二级标题** | 左对齐，加粗，字号14pt |
 | **三级标题** | 左对齐，加粗，字号12pt |
