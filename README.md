@@ -1,221 +1,295 @@
-# TRIZ Innovation Toolkit 🚀 / TRIZ 创新工具箱
+# TRIZ Innovation Toolkit 🚀
 
-[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/Version-2.0.0-orange.svg)]()
 [![Chapters](https://img.shields.io/badge/Chapters-24-blue)](./chapters/)
-[![Tools](https://img.shields.io/badge/TRIZ%20Tools-22-orange)](#whats-inside--内容概览)
-[![Platform](https://img.shields.io/badge/Platform-Claude%20Code%20%7C%20Copilot%20CLI%20%7C%20Amp-green)]()
+[![TRIZ Tools](https://img.shields.io/badge/TRIZ%20Tools-22-orange)]()
+[![Platform](https://img.shields.io/badge/Platform-Hermes%20Agent-green)]()
 
-> **A comprehensive TRIZ systematic innovation skill for AI coding agents — intelligent dual-path problem solving (Radial analyst / Convergent coach), 24 chapters, 22 tools, synthesized from 8 authoritative sources.**
+> **面向 Hermes Agent 的 TRIZ 系统化创新 + AI 专利分析一体化工具包**
 >
-> **面向 AI 编程助手的 TRIZ 系统创新技能包 — 智能双路径问题解决（放射型分析 / 收敛型教练），24 章、22 种工具，源自 8 本权威著作。**
+> 24 章完整知识体系 + Triz-AI 专利挖掘 CLI + 智能双路径问题解决
 
 ---
 
-## What is TRIZ? / 什么是 TRIZ？
+## 📋 目录
 
-**TRIZ** (Teoriya Resheniya Izobretatelskikh Zadach / 发明问题解决理论) is the "science of inventiveness" — a systematic methodology for solving engineering and business problems by leveraging patterns extracted from millions of patents. Developed by Genrich Altshuller starting in 1946, TRIZ replaces trial-and-error with principled problem-solving.
-
-**TRIZ** 是"发明问题解决理论"——一种通过分析数百万专利中提取的创新模式，系统化解决工程和商业问题的方法论。由 Genrich Altshuller 于 1946 年创建，TRIZ 用原则驱动的问题解决方式取代了试错法。
-
-**Ideality = Σ Benefits / (Σ Costs + Σ Harms)**
-
-**The North Star of TRIZ**: maximize useful functions while driving costs and harms toward zero.
-
-**TRIZ 的北极星指标**：最大化有用功能，同时将成本和危害趋近于零。
-
----
-
-## What's Inside / 内容概览
-
-| File / 文件 | Purpose / 用途 | Lines |
-|-------------|---------------|-------|
-| [`SKILL.md`](./SKILL.md) | Entry point — path selection gateway (Radial/Convergent), dual-persona prompts, problem routing, tool selector, chapter index | 338 |
-| [`cheatsheet.md`](./cheatsheet.md) | Quick-reference: 39 parameters, top contradictions, routing flowchart, checklists | 349 |
-| [`patterns.md`](./patterns.md) | Full pattern catalog: 40 Principles, 8 Trends, 76 Standards, ARIZ, AFI | 251 |
-| [`glossary.md`](./glossary.md) | A-Z term definitions from all 8 source books | 197 |
-| [`chapters/`](./chapters/) | **24 deep-dive chapter summaries** (see full map below) | ~2,100 |
-
-### Chapter Map / 章节地图
-
-| # | Chapter / 章节 | Core Tool / 核心工具 |
-|---|---------------|---------------------|
-| 01 | Zero to TRIZ | Overview & learning roadmap |
-| 02 | TRIZ Philosophy | Ideality, Contradictions, System Operator |
-| 03 | 40 Principles | Contradiction Matrix + Inventive Principles |
-| 04 | Trends of Evolution | 8 Trends, S-Curve Analysis |
-| 05 | Ideality & Resources | Ideality equation, 7 resource types |
-| 06 | Effects Database | Physical/chemical/geometric effects |
-| 07 | Psychological Inertia | SLP, DTC, Size-Time-Cost thinking tools |
-| 08 | Time and Scale | 9-Windows, System Operator |
-| 09 | Ideal Final Result | IFR formulation, X-Element |
-| 10 | Group Creativity | Brainstorming, Synectics, facilitation |
-| 11 | Problem Solving Process | Problem definition, root cause analysis |
-| 12 | Function Analysis | Component analysis, interaction matrix |
-| 13 | Standard Solutions | 76 Standards (Classical + Oxford) |
-| 14 | Trimming | Component elimination, function transfer |
-| 15 | Ten Pitfalls | Common TRIZ mistakes & how to avoid |
-| 16 | Ten Tips | Practical application advice |
-| 17 | ARIZ | 5-step algorithm for hard problems |
-| 18 | AFI | Anticipatory Failure Identification (4-step) |
-| 19 | TRIZ for Business | 12 Double Business Principles |
-| 20 | Innovation Process | 10-step strategic-to-execution pipeline |
-| 21 | Customer Benefit | I-S Matrix, customer value analysis |
-| 22 | Implementation | 5-stage pipeline, prototype ladder |
-| 23 | CAI | Computer-Aided Innovation tools |
-| 24 | Corporate Training | MATRIZ 5-level competency model |
-
-**80/20 Rule / 二八法则**: 5 core tools — Contradiction Matrix, Separation Principles, Function Analysis + Trimming, IFR, and AFI — solve ~80% of engineering problems.
+- [什么是 TRIZ？](#什么是-triz)
+- [功能特性](#功能特性)
+- [快速安装](#快速安装)
+- [使用方法](#使用方法)
+- [Triz-AI CLI 配置](#triz-ai-cli-配置)
+- [24 章知识体系](#24-章知识体系)
+- [问题路由诊断](#问题路由诊断)
+- [变更日志](#变更日志)
 
 ---
 
-## Quick Start / 快速开始
+## 什么是 TRIZ？
 
-### Install as Claude Code Skill
+**TRIZ**（发明问题解决理论）是由 Genrich Altshuller 于 1946 年创立的系统化创新方法论，基于 200 万+ 专利分析提炼出的创新规律。
 
+**本工具包将 TRIZ 方法论与 AI 专利挖掘结合，提供一站式创新问题解决方案。**
+
+---
+
+## 功能特性
+
+### 🔬 TrizInv 知识层（Skill）
+
+| 功能 | 说明 |
+|------|------|
+| 24 章完整知识体系 | 从基础到高级的 TRIZ 工具全覆盖 |
+| 40 发明原理 | 解决技术矛盾的标准方案库 |
+| 矛盾矩阵 (39×39) | 快速查找推荐原理 |
+| 8 技术进化趋势 | 预测产品下一代形态 |
+| 76 标准解 | 物场分析的标准解法 |
+| ARIZ 5 步算法 | 超级难题的系统化求解 |
+| AFI 预期失效识别 | 设计阶段预测潜在失效 |
+| 双路径问题解决 | 放射型（全自动）/ 收敛型（对话教练） |
+
+### 🤖 Triz-AI 数据层（CLI）
+
+| 功能 | 说明 |
+|------|------|
+| `analyze` | 自动分类问题 → 路由到最佳 TRIZ 方法 |
+| `analyze --deep` | ARIZ-85C 深度 3 轮分析 |
+| `discover` | 发现某领域低频 TRIZ 原理（机会空白） |
+| `matrix stats` | 矛盾矩阵统计 |
+| `ingest` | 导入专利数据 |
+| `evolve` | 从专利发现候选新原理 |
+
+---
+
+## 快速安装
+
+### 方式 1: 一键脚本（推荐）
+
+**Linux / macOS / WSL:**
 ```bash
-# Clone the repository
-git clone https://github.com/fanfanbox/triz-innovation-toolkit.git
-
-# Copy to Claude Code skills directory
-cp -r triz-innovation-toolkit ~/.claude/skills/triz/
-
-# The skill auto-registers — invoke with:
-# "Use the TRIZ skill to solve: <your problem>"
+curl -fsSL https://raw.githubusercontent.com/fanfanbox/triz-innovation-toolkit/main/install.sh | bash
 ```
 
-### Install as GitHub Copilot CLI Skill
-
-```bash
-# Clone and place in Copilot skills
-git clone https://github.com/fanfanbox/triz-innovation-toolkit.git
-cp -r triz-innovation-toolkit ~/.copilot/skills/triz/
-
-# Or for project-level use:
-# cp -r triz-innovation-toolkit .github/skills/triz/
+**Windows (PowerShell / CMD):**
+```cmd
+git clone https://github.com/fanfanbox/triz-innovation-toolkit.git "%USERPROFILE%\.hermes\skills\triz-innovation-toolkit"
 ```
 
-### Install as Amp Agent Skill
+**Windows (Git Bash):**
+```bash
+bash install.bat
+```
+
+### 方式 2: 手动安装
 
 ```bash
-# Clone and place in Amp skills
+# 1. 克隆到 Hermes skills 目录
+cd ~/.hermes/skills
 git clone https://github.com/fanfanbox/triz-innovation-toolkit.git
-cp -r triz-innovation-toolkit ~/.agents/skills/triz/
+
+# 2. 安装 triz-ai（需要 Python >= 3.12）
+pip install triz-ai
+
+# 3. 配置 LLM 后端
+cp config.yaml.template ~/.triz-ai/config.yaml
+# 编辑 ~/.triz-ai/config.yaml 填入 API Key
+```
+
+### 方式 3: Hermes CLI
+
+```bash
+hermes skills tap add fanfanbox/triz-innovation-toolkit
+hermes skills install triz-innovation-toolkit
 ```
 
 ---
 
-## Problem Solving Paths / 问题解决路径
+## 使用方法
 
-The skill now features an intelligent **path selection gateway** that recommends the optimal problem-solving approach based on your problem description.
+### 加载 Skill
 
-本技能现配备智能**路径选择网关**，根据您的问题描述自动推荐最优解决路径。
+```
+/skill triz-innovation-toolkit
+```
 
-### Two Paths / 两条路径
+### 描述问题
 
-| | Radial / 放射型 | Convergent / 收敛型 |
-|---|---|---|
-| **Persona / 人格** | TRIZ Analyst / TRIZ 分析师 | TRIZ Coach / TRIZ 教练 |
-| **Mode / 模式** | One-shot, fully automated / 一次输入，全自动 | Multi-turn Socratic dialogue / 多轮苏格拉底式对话 |
-| **Best for / 适用** | Clear problem boundaries, experienced users / 问题边界清晰、有经验用户 | Fuzzy problems, new domains, need alignment / 问题模糊、新领域、需对齐认知 |
-| **Output / 产出** | Complete analysis report / 完整分析报告 | Problem definition document + execution roadmap → report / 问题定义书 + 执行路线图 → 报告 |
-| **User effort / 用户投入** | Low (initial input + review) / 低 | High (dialogue co-creation) / 高 |
+```
+我想提升 SiC MOSFET 的开关速度，但 EMI 会增大，如何解决？
+```
 
-### Gateway Logic / 网关逻辑
+AI 会自动：
+1. 识别技术矛盾（Speed vs EMI）
+2. 调用 `triz-ai discover` 进行专利挖掘
+3. 推荐 TRIZ 原理（如 Mechanical Vibration、Dynamics）
+4. 生成具体解决方案方向
 
-The gateway evaluates your problem against three criteria: **clear problem boundaries + explicit core contradiction + known constraints**. If all three are met, it recommends the fast Radial path; otherwise it suggests the Convergent coach to refine the problem definition first.
+### CLI 命令
 
-网关通过三个条件评估您的问题：**问题边界清晰 + 核心矛盾明确 + 约束条件已知**。三项全满足则推荐快速放射路径；否则，系统会建议收敛型教练路径，先帮助您完善问题定义。
+```bash
+# 分析问题
+triz-ai analyze "SiC MOSFET 开关速度提升但 EMI 增大"
 
-### Mandatory Triz-AI / 必经节点：专利挖掘
+# 深度分析
+triz-ai analyze "问题" --deep
 
-**Both paths converge at the Triz-AI patent mining node** — an automatic patent landscape search that enriches your analysis with competitive intelligence and technology trends before the final report is generated.
+# 发现领域机会
+triz-ai discover --domain "电机设计"
 
-**两条路径最终汇聚于 Triz-AI 专利挖掘节点**——在生成最终报告之前，系统会自动搜索专利领域现状，为您的分析提供竞争情报和技术趋势洞察。
-
----
-
-## Usage Examples / 使用示例
-
-### Example 1: Engineering Trade-off / 工程权衡
-
-> **Problem**: "My electric motor needs thinner laminations to reduce eddy current loss, but thinner laminations reduce mechanical strength."
-
-**Route**: Technical Contradiction → Contradiction Matrix → Principles 1 (Segmentation), 15 (Dynamicity), 40 (Composite Materials)
-
-**Outcome**: Stack thin laminations bonded with high-strength epoxy — segmentation at micro scale preserves both electrical and mechanical properties.
-
-### Example 2: System Simplification / 系统简化
-
-> **Problem**: "Our gearbox has 47 components and the assembly cost is killing margins."
-
-**Route**: System too complex → Function Analysis → Trimming (Ch14)
-
-**Outcome**: Identify components performing auxiliary functions. Transfer their useful functions to remaining components. Eliminate 12 parts without losing any functionality.
-
-### Example 3: Before Design Freeze / 设计冻结前
-
-> **Problem**: "We're about to freeze the battery pack design. What could go wrong?"
-
-**Route**: Before launch → AFI (Ch18) — Invert → Amplify → Generate → Fix
-
-**Outcome**: Deliberately imagine 15 failure modes. Apply TRIZ tools to prevent each. Catch 3 critical thermal runaway scenarios before they become recall triggers.
+# 矛盾矩阵统计
+triz-ai matrix stats
+```
 
 ---
 
-## Source Attribution / 来源声明
+## Triz-AI CLI 配置
 
-This skill synthesizes concepts from the following authoritative works. It is a **transformative educational synthesis** — a study guide, not a reproduction. Users should consult the original works for complete content.
+### 环境要求
 
-本技能综合了以下权威著作的概念。这是一份**转化性教育综合**——学习指南，而非复制品。使用者应查阅原著获取完整内容。
+| 组件 | 要求 |
+|------|------|
+| Python | >= 3.12 |
+| Ollama | 已安装（用于本地 embedding） |
+| MiMo API | API Key（或其他 LLM 提供商） |
 
-| # | Title / 书名 | Author / 作者 | Language |
-|---|-------------|--------------|----------|
-| 1 | *TRIZ For Dummies* | Lilly Haines-Gadd | EN |
-| 2 | *TRIZ for Engineers: Enabling Inventive Problem Solving* | Karen Gadd | EN |
-| 3 | *TRIZ Handbook* | Dr. Pavel Livotov | EN |
-| 4 | *TRIZ POWER TOOLS* | Larry Ball | EN |
-| 5 | *TRIZ 打开创新之门的金钥匙 I* | 孙永伟 (Sun Yongwei) | ZH |
-| 6 | *TRIZ 打开创新之门的金钥匙 II* | 孙永伟 (Sun Yongwei) | ZH |
-| 7 | *TRIZ 推动创新的技术* | 布柯曼 (Bukhman) | ZH |
-| 8 | *创新算法：TRIZ、系统创新和技术创造力* | 阿奇舒勒 (Altshuller) | ZH |
+### 配置文件
 
----
+创建 `~/.triz-ai/config.yaml`：
 
-## License / 许可证
+```yaml
+# MiMo API + Ollama 本地 Embedding
+llm:
+  default_model: mimo-v2.5-pro
+  classify_model: mimo-v2.5
+  deep_model: mimo-v2.5-pro
+  api_base: https://api.xiaomimimo.com/v1
+  api_key: YOUR_API_KEY
 
-This work is licensed under **CC BY-NC-SA 4.0** (Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International).
+embeddings:
+  model: nomic-embed-text
+  dimensions: 768
+  api_base: http://localhost:11434/v1
+  api_key: ollama
+```
 
-See [LICENSE](./LICENSE) for the full legal text.
+### Ollama 模型安装
 
-**In short / 简言之**:
-- ✅ **Share** — copy and redistribute in any medium or format
-- ✅ **Adapt** — remix, transform, and build upon the material
-- ❌ **Commercial Use** — no commercial use without permission
-- 🔗 **Attribution** — you must give appropriate credit
-- 🔗 **ShareAlike** — derivatives must use the same license
+```bash
+# 安装 embedding 模型（必需）
+ollama pull nomic-embed-text
 
----
+# 安装大模型（可选，用于本地分析）
+ollama pull qwen2.5:7b
+```
 
-## Contributing / 贡献
+### ⚠️ 关键 Pitfalls
 
-Contributions are welcome! See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+1. **模型名称不能带 `openai/` 前缀** — MiMo API 返回 "Unsupported model"
+2. **Embedding 必须单独配置 `api_base`** — 否则会用 LLM 的 api_base 请求 embedding
+3. **Python 版本冲突** — 运行前清除 `PYTHONPATH` 避免 Hermes venv 冲突
 
-**Scope of contributions / 贡献范围**:
-- Corrections to concepts, terminology, or translations / 概念、术语或翻译修正
-- Additional worked examples for existing chapters / 为现有章节补充实例
-- New TRIZ tools or frameworks not yet covered / 尚未涵盖的新 TRIZ 工具
-- Better explanations or clearer formulations / 更清晰的解释或表述
-
-**Not in scope / 不在范围内**: Reproducing more text from the copyrighted source books / 不得复制受版权保护的源书籍内容。
-
----
-
-## Star History / 星标历史
-
-If you find this toolkit useful, please ⭐ star this repo — it helps others discover TRIZ!
-
-如果这个工具箱对你有用，请 ⭐ 点亮星标——帮助更多人发现 TRIZ！
+详见 [references/triz-ai-setup.md](references/triz-ai-setup.md)
 
 ---
 
-*Synthesized with care from 8 authoritative sources spanning Chinese and English TRIZ literature. May the Ideality be with you. 🚀*
+## 24 章知识体系
+
+| 部分 | 章节 | 核心工具 |
+|------|------|----------|
+| **I 基础** | Ch01-02 | TRIZ 概述、五大思维支柱 |
+| **II 核心矛盾工具** | Ch03-05 | 40 原理、矛盾矩阵、8 趋势、理想化方程 |
+| **III 知识与思维** | Ch06-08 | 效应数据库、心理惯性突破、九屏幕法 |
+| **IV 高级求解** | Ch09-13 | IFR、功能分析、物场分析、76 标准解 |
+| **V 系统优化** | Ch14 | 裁剪 |
+| **VI 算法方法** | Ch17-18 | ARIZ、AFI |
+| **VII 商业创新** | Ch19-21 | 商业 TRIZ、10 步流程、客户收益分析 |
+| **VIII 落地实施** | Ch22-24 | 实施方法论、CAI、企业培训 |
+
+---
+
+## 问题路由诊断
+
+按顺序回答，第一个"Yes"指向起始工具：
+
+1. 问题是否明确？ → 功能分析 / IFR
+2. 什么类型的矛盾？ → 矛盾矩阵 / 分离原理
+3. 需要预测未来？ → 8 趋势
+4. 需要降本简化？ → 裁剪
+5. 创意枯竭？ → SLP / DTC / 九屏幕
+6. 物质-场问题？ → 76 标准解
+7. 找实现功能的方法？ → 效应数据库
+8. 超级难题？ → ARIZ
+9. 预测预防失效？ → AFI
+10. 商业/管理问题？ → 商业 TRIZ
+11. 准备实施？ → 实施方法论
+
+---
+
+## 变更日志
+
+### v2.0.0 (2026-07-22)
+
+**重大更新：集成 Triz-AI 专利分析**
+
+#### 新增
+- ✅ Triz-AI CLI 集成 — 专利挖掘成为全局必选项
+- ✅ 一键安装脚本 (`install.sh` / `install.bat`)
+- ✅ 配置模板 (`config.yaml.template`)
+- ✅ 自动调用规则 — 5 个触发点自动执行 triz-ai 命令
+- ✅ 降级方案 — Triz-AI 不可用时使用缓存数据
+- ✅ MiMo API + Ollama 本地 embedding 支持
+- ✅ 6 种分析方法详解
+- ✅ Pitfalls 文档 — 4 个关键陷阱
+
+#### 更新
+- 📝 SKILL.md 完全重写，整合 Triz-AI 内容
+- 📝 README.md 更新安装说明和功能特性
+- 📝 CHANGELOG.md 更新
+
+#### 文件结构
+```
+triz-innovation-toolkit/
+├── SKILL.md                    # 主入口（路径选择 + 工具路由 + Triz-AI 集成）
+├── install.sh                  # Linux/Mac 安装脚本
+├── install.bat                 # Windows 安装脚本
+├── config.yaml.template        # Triz-AI 配置模板
+├── chapters/                   # 24 章详细内容
+│   ├── ch01-zero-to-triz.md
+│   ├── ...
+│   └── ch24-corporate-training.md
+├── cheatsheet.md               # 快速参考表
+├── patterns.md                 # 模式目录
+├── glossary.md                 # 术语表
+├── references/                 # 参考文档
+│   ├── routing-and-tools.md
+│   └── triz-ai-setup.md
+├── README.md                   # 本文档
+├── CHANGELOG.md                # 变更日志
+└── LICENSE                     # MIT 许可证
+```
+
+### v1.0.0 (2026-07-21)
+
+- 初始版本
+- 24 章 TRIZ 知识体系
+- 双路径问题解决（放射型/收敛型）
+- 11 题问题路由诊断
+
+---
+
+## 许可证
+
+MIT License - 详见 [LICENSE](LICENSE)
+
+---
+
+## 致谢
+
+知识来源：
+- *TRIZ For Dummies* (Haines-Gadd, 2016)
+- *TRIZ Handbook* (Livotov & Petrov)
+- *TRIZ POWER TOOLS* (Ball)
+- *TRIZ for Engineers* (Gadd)
+- *金钥匙 I & 金钥匙2* (孙永伟)
+- *创新算法* (Altshuller 中译本)
+- *推动创新的技术* (Bukhman 中译本)

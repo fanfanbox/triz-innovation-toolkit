@@ -1,0 +1,63 @@
+# Triz-AI Configuration Template
+# 复制到 ~/.triz-ai/config.yaml 并填入你的 API Key
+#
+# 使用方法:
+#   cp config.yaml.template ~/.triz-ai/config.yaml
+#   编辑 ~/.triz-ai/config.yaml 填入 api_key
+
+# ============================================================
+# 方案 A: MiMo API + Ollama 本地 Embedding（推荐）
+# ============================================================
+llm:
+  default_model: mimo-v2.5-pro        # 主分析模型
+  classify_model: mimo-v2.5           # 分类模型（快速）
+  deep_model: mimo-v2.5-pro           # ARIZ 深度分析
+  reasoning_effort: medium
+  api_base: https://api.xiaomimimo.com/v1
+  api_key: YOUR_XIAOMI_API_KEY        # ← 替换为你的 Key
+
+embeddings:
+  model: nomic-embed-text             # Ollama 本地 embedding
+  dimensions: 768
+  api_base: http://localhost:11434/v1  # Ollama OpenAI 兼容端点
+  api_key: ollama                      # Ollama 不验证 key
+
+# ============================================================
+# 方案 B: Ollama 全本地（免费，离线）
+# 需要安装大模型: ollama pull qwen2.5:7b
+# ============================================================
+# llm:
+#   default_model: ollama/qwen2.5:7b
+#   classify_model: ollama/qwen2.5:7b
+#
+# embeddings:
+#   model: nomic-embed-text
+#   dimensions: 768
+
+# ============================================================
+# 方案 C: OpenRouter（需 API Key，模型多）
+# ============================================================
+# llm:
+#   default_model: openrouter/deepseek/deepseek-chat
+#   classify_model: openrouter/nvidia/nemotron-3-nano-30b-a3b:free
+#   api_key: YOUR_OPENROUTER_API_KEY
+#
+# embeddings:
+#   model: openrouter/nvidia/llama-nemotron-embed-vl-1b-v2:free
+#   dimensions: 768
+#   api_key: YOUR_OPENROUTER_API_KEY
+
+# ============================================================
+# 数据库（可选）
+# ============================================================
+database:
+  path: ~/.triz-ai/patents.db
+
+# ============================================================
+# 进化参数（可选）
+# ============================================================
+evolution:
+  review_threshold: 0.7
+  consolidation_interval: 25
+  retention_days: 180
+  source_confidence_weight: 0.6
