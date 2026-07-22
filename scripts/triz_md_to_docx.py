@@ -23,10 +23,10 @@ def set_cell_shading(cell, color):
     cell._tc.get_or_add_tcPr().append(shading_elm)
 
 
-def add_cover_page(doc, title, subtitle, date):
+def add_cover_page(doc, title, subtitle, author, date):
     """添加封面页"""
     # 添加空行使内容居中
-    for _ in range(6):
+    for _ in range(5):
         doc.add_paragraph()
     
     # 标题
@@ -52,7 +52,16 @@ def add_cover_page(doc, title, subtitle, date):
     run.font.color.rgb = RGBColor(0x2B, 0x6C, 0xB0)
     
     # 空行
-    for _ in range(4):
+    for _ in range(3):
+        doc.add_paragraph()
+    
+    # 作者
+    if author:
+        p = doc.add_paragraph()
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run = p.add_run(author)
+        run.font.size = Pt(16)
+        run.font.color.rgb = RGBColor(0x2B, 0x6C, 0xB0)
         doc.add_paragraph()
     
     # 日期
@@ -67,7 +76,7 @@ def add_cover_page(doc, title, subtitle, date):
 
 
 def add_toc(doc):
-    """添加目录页"""
+    """添加目录页（三级目录，带正确链接）"""
     # 目录标题
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -78,26 +87,31 @@ def add_toc(doc):
     
     doc.add_paragraph()  # 空行
     
-    # 添加 TOC 域代码
+    # 添加 TOC 域代码 - 显示1-3级标题，带超链接
     paragraph = doc.add_paragraph()
+    
+    # 开始域
     run = paragraph.add_run()
     fldChar = parse_xml(f'<w:fldChar {nsdecls("w")} w:fldCharType="begin"/>')
     run._r.append(fldChar)
     
+    # 域指令：\o "1-3" 表示1-3级标题，\h 表示超链接，\z 隐藏制表符，\u 使用段落大纲
     run = paragraph.add_run()
     instrText = parse_xml(f'<w:instrText {nsdecls("w")} xml:space="preserve"> TOC \\o "1-3" \\h \\z \\u </w:instrText>')
     run._r.append(instrText)
     
+    # 分隔符
     run = paragraph.add_run()
     fldChar = parse_xml(f'<w:fldChar {nsdecls("w")} w:fldCharType="separate"/>')
     run._r.append(fldChar)
     
-    # 添加占位文本
-    run = paragraph.add_run('（请在 Word 中右键点击此处，选择"更新域"以生成目录）')
+    # 占位文本
+    run = paragraph.add_run('【请在 Word 中右键此处，选择"更新域"以生成目录】')
     run.font.size = Pt(11)
     run.font.color.rgb = RGBColor(0x71, 0x80, 0x96)
     run.font.italic = True
     
+    # 结束域
     run = paragraph.add_run()
     fldChar = parse_xml(f'<w:fldChar {nsdecls("w")} w:fldCharType="end"/>')
     run._r.append(fldChar)
@@ -259,7 +273,7 @@ def add_content_to_doc(doc, content, is_first_level=False):
             p.paragraph_format.line_spacing = 1.5
 
 
-def md_to_word(md_file, output_file, title=None, date=None):
+def md_to_word(md_file, output_file, title=None, author=None, date=None):
     """将 Markdown 文件转换为 Word 文档"""
     
     # 读取 Markdown 文件
@@ -289,11 +303,14 @@ def md_to_word(md_file, output_file, title=None, date=None):
         title = basename.replace('_完整版.md', '').replace('TRIZ_报告_', '').replace('TRIZ_创新分析报告_', '')
         title = f'TRIZ 创新分析报告\n{title}'
     
+    if not author:
+        author = ''
+    
     if not date:
         date = datetime.now().strftime('%Y年%m月%d日')
     
     # 添加封面页
-    add_cover_page(doc, title, 'TRIZ 系统化创新分析报告', date)
+    add_cover_page(doc, title, 'TRIZ 系统化创新分析报告', author, date)
     
     # 添加目录页
     add_toc(doc)
@@ -310,7 +327,7 @@ def md_to_word(md_file, output_file, title=None, date=None):
         if level == 1 and i > 0:
             doc.add_page_break()
         
-        # 添加标题
+        # 添加标题（使用内置Heading样式，确保TOC能识别）
         heading = doc.add_heading(title, level=level)
         for run in heading.runs:
             run.font.color.rgb = RGBColor(0x1A, 0x36, 0x5D)
@@ -327,7 +344,7 @@ def md_to_word(md_file, output_file, title=None, date=None):
 
 def main():
     if len(sys.argv) < 2:
-        print('用法: python triz_md_to_docx.py <input.md> [output.docx] [--title "标题"] [--date "日期"]')
+        print('用法: python triz_md_to_docx.py <input.md> [output.docx] [--author "作者"] [--title "标题"] [--date "日期"]')
         sys.exit(1)
     
     input_file = sys.argv[1]
@@ -335,12 +352,16 @@ def main():
     # 解析参数
     output_file = None
     title = None
+    author = None
     date = None
     
     i = 2
     while i < len(sys.argv):
         if sys.argv[i] == '--title' and i + 1 < len(sys.argv):
             title = sys.argv[i + 1]
+            i += 2
+        elif sys.argv[i] == '--author' and i + 1 < len(sys.argv):
+            author = sys.argv[i + 1]
             i += 2
         elif sys.argv[i] == '--date' and i + 1 < len(sys.argv):
             date = sys.argv[i + 1]
@@ -354,7 +375,7 @@ def main():
     if not output_file:
         output_file = input_file.replace('.md', '.docx')
     
-    md_to_word(input_file, output_file, title, date)
+    md_to_word(input_file, output_file, title, author, date)
 
 
 if __name__ == '__main__':
