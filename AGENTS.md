@@ -956,18 +956,33 @@ S1(冷却液) ───→ S2(PCM) ───→ S3(热源)
 
 ### 转换方法
 
-使用 pandoc 将 Markdown 转换为 Word：
+使用 pandoc 将 Markdown 转换为 Word，添加技术报告元数据：
 
 ```bash
-pandoc "TRIZ_报告_<课题名称>_完整版.md" -o "TRIZ_报告_<课题名称>_完整版.docx" --from markdown --to docx
+pandoc "TRIZ_报告_<课题名称>_完整版.md" \
+  -o "TRIZ_报告_<课题名称>_完整版.docx" \
+  --from markdown \
+  --to docx \
+  --metadata title="TRIZ 系统化创新分析报告" \
+  --metadata author="王健 博士" \
+  --metadata date="$(date '+%Y年%m月%d日')" \
+  --metadata subject="TRIZ Innovation Analysis" \
+  --metadata keywords="TRIZ, 创新, 电机设计, 专利分析"
 ```
 
-### 转换注意事项
+### 技术报告格式规范
 
-- 表格格式会自动转换
-- 代码块会转换为带格式的文本
-- 标题层级会保留
-- 列表格式会保留
+| 元素 | 格式要求 |
+|------|----------|
+| **标题** | 居中，加粗，字号18-24pt |
+| **作者** | 王健 博士 |
+| **日期** | 自动生成当前日期 |
+| **一级标题** | 左对齐，加粗，字号16pt |
+| **二级标题** | 左对齐，加粗，字号14pt |
+| **三级标题** | 左对齐，加粗，字号12pt |
+| **正文** | 左对齐，字号11pt，行距1.5 |
+| **表格** | 带边框，表头加粗，交替行颜色 |
+| **页边距** | 上下2.54cm，左右3.18cm |
 
 ### 检查清单
 
