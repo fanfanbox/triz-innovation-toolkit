@@ -1,15 +1,21 @@
 #!/usr/bin/env python3
 """
-TRIZ 报告 Markdown -> Word 转换脚本
-功能：封面页、三级目录、章节分页、格式规范
+TRIZ Report — Markdown to Word Converter (python-docx)
+Generates professional Word documents with:
+- Cover page (title + subtitle + author + date)
+- 3-level TOC (update in Word after opening)
+- Page breaks before H1 headings
+- Table styling (blue header, alternating rows)
+- Proper margins (2.54cm top/bottom, 3.18cm left/right)
 """
 
+import argparse
 import re
 import sys
-import os
-from datetime import datetime
+from pathlib import Path
+
 from docx import Document
-from docx.shared import Pt, Inches, Cm, RGBColor
+from docx.shared import Pt, Cm, Inches, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.enum.section import WD_ORIENT
@@ -17,365 +23,374 @@ from docx.oxml.ns import qn, nsdecls
 from docx.oxml import parse_xml
 
 
-def set_cell_shading(cell, color):
-    """设置单元格背景色"""
-    shading_elm = parse_xml(f'<w:shd {nsdecls("w")} w:fill="{color}"/>')
-    cell._tc.get_or_add_tcPr().append(shading_elm)
-
-
-def add_cover_page(doc, title, subtitle, author, date):
-    """添加封面页"""
-    # 添加空行使内容居中
-    for _ in range(5):
+def create_cover_page(doc, title, subtitle, author, date):
+    """Create a professional cover page."""
+    # Add blank paragraphs for spacing
+    for _ in range(6):
         doc.add_paragraph()
     
-    # 标题
+    # Title
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     run = p.add_run(title)
     run.font.size = Pt(28)
     run.font.bold = True
-    run.font.color.rgb = RGBColor(0x1A, 0x36, 0x5D)
+    run.font.color.rgb = RGBColor(0, 51, 102)  # Dark blue
     
-    # 分隔线
-    p = doc.add_paragraph()
-    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = p.add_run('─' * 40)
-    run.font.size = Pt(14)
-    run.font.color.rgb = RGBColor(0xF6, 0xAD, 0x55)
-    
-    # 副标题
+    # Subtitle
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     run = p.add_run(subtitle)
-    run.font.size = Pt(18)
-    run.font.color.rgb = RGBColor(0x2B, 0x6C, 0xB0)
+    run.font.size = Pt(16)
+    run.font.color.rgb = RGBColor(102, 102, 102)  # Gray
     
-    # 空行
-    for _ in range(3):
-        doc.add_paragraph()
-    
-    # 作者
-    if author:
-        p = doc.add_paragraph()
-        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        run = p.add_run(author)
-        run.font.size = Pt(16)
-        run.font.color.rgb = RGBColor(0x2B, 0x6C, 0xB0)
-        doc.add_paragraph()
-    
-    # 日期
+    # Separator line
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = p.add_run(date)
-    run.font.size = Pt(14)
-    run.font.color.rgb = RGBColor(0x71, 0x80, 0x96)
+    run = p.add_run('━' * 40)
+    run.font.color.rgb = RGBColor(0, 51, 102)
     
-    # 分页
+    # Author
+    p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run = p.add_run(f'作者：{author}')
+    run.font.size = Pt(14)
+    run.font.color.rgb = RGBColor(51, 51, 51)
+    
+    # Date
+    p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run = p.add_run(f'日期：{date}')
+    run.font.size = Pt(14)
+    run.font.color.rgb = RGBColor(51, 51, 51)
+    
+    # Page break after cover
     doc.add_page_break()
 
 
 def add_toc(doc):
-    """添加目录页（三级目录，带正确链接）"""
-    # 目录标题
+    """Add a Table of Contents field (3-level, update in Word)."""
+    # TOC title
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     run = p.add_run('目  录')
-    run.font.size = Pt(22)
+    run.font.size = Pt(18)
     run.font.bold = True
-    run.font.color.rgb = RGBColor(0x1A, 0x36, 0x5D)
+    run.font.color.rgb = RGBColor(0, 51, 102)
     
-    doc.add_paragraph()  # 空行
+    # Add TOC field
+    p = doc.add_paragraph()
+    run = p.add_run()
+    fldChar1 = parse_xml(f'<w:fldChar {nsdecls("w")} w:fldCharType="begin"/>')
+    run._r.append(fldChar1)
     
-    # 添加 TOC 域代码 - 显示1-3级标题，带超链接
-    paragraph = doc.add_paragraph()
-    
-    # 开始域
-    run = paragraph.add_run()
-    fldChar = parse_xml(f'<w:fldChar {nsdecls("w")} w:fldCharType="begin"/>')
-    run._r.append(fldChar)
-    
-    # 域指令：\o "1-3" 表示1-3级标题，\h 表示超链接，\z 隐藏制表符，\u 使用段落大纲
-    run = paragraph.add_run()
+    run = p.add_run()
     instrText = parse_xml(f'<w:instrText {nsdecls("w")} xml:space="preserve"> TOC \\o "1-3" \\h \\z \\u </w:instrText>')
     run._r.append(instrText)
     
-    # 分隔符
-    run = paragraph.add_run()
-    fldChar = parse_xml(f'<w:fldChar {nsdecls("w")} w:fldCharType="separate"/>')
-    run._r.append(fldChar)
+    run = p.add_run()
+    fldChar2 = parse_xml(f'<w:fldChar {nsdecls("w")} w:fldCharType="separate"/>')
+    run._r.append(fldChar2)
     
-    # 占位文本
-    run = paragraph.add_run('【请在 Word 中右键此处，选择"更新域"以生成目录】')
-    run.font.size = Pt(11)
-    run.font.color.rgb = RGBColor(0x71, 0x80, 0x96)
+    run = p.add_run('（请在 Word 中右键此处，选择"更新域"以生成目录）')
+    run.font.color.rgb = RGBColor(128, 128, 128)
     run.font.italic = True
     
-    # 结束域
-    run = paragraph.add_run()
-    fldChar = parse_xml(f'<w:fldChar {nsdecls("w")} w:fldCharType="end"/>')
-    run._r.append(fldChar)
+    run = p.add_run()
+    fldChar3 = parse_xml(f'<w:fldChar {nsdecls("w")} w:fldCharType="end"/>')
+    run._r.append(fldChar3)
     
-    # 分页
+    # Page break after TOC
     doc.add_page_break()
 
 
-def parse_markdown(md_content):
-    """解析 Markdown 内容为结构化数据"""
-    lines = md_content.split('\n')
-    sections = []
-    current_section = None
-    current_content = []
-    
-    for line in lines:
-        # 检测标题
-        heading_match = re.match(r'^(#{1,6})\s+(.+)$', line)
-        if heading_match:
-            # 保存当前section
-            if current_section:
-                current_section['content'] = '\n'.join(current_content)
-                sections.append(current_section)
-            
-            level = len(heading_match.group(1))
-            title = heading_match.group(2).strip()
-            current_section = {
-                'level': level,
-                'title': title,
-                'content': ''
-            }
-            current_content = []
-        else:
-            current_content.append(line)
-    
-    # 保存最后一个section
-    if current_section:
-        current_section['content'] = '\n'.join(current_content)
-        sections.append(current_section)
-    
-    return sections
-
-
-def parse_table(content):
-    """解析 Markdown 表格"""
-    lines = content.strip().split('\n')
-    table_lines = [l for l in lines if '|' in l and l.strip().startswith('|')]
-    
-    if len(table_lines) < 2:
-        return None
-    
-    # 解析表头
-    headers = [cell.strip() for cell in table_lines[0].split('|') if cell.strip()]
-    
-    # 跳过分隔行
-    rows = []
-    for line in table_lines[2:]:  # 跳过表头和分隔行
-        cells = [cell.strip() for cell in line.split('|') if cell.strip()]
-        if cells:
-            rows.append(cells)
-    
-    return {'headers': headers, 'rows': rows}
-
-
-def add_table_to_doc(doc, table_data):
-    """添加表格到文档"""
-    if not table_data:
-        return
-    
-    headers = table_data['headers']
-    rows = table_data['rows']
-    
-    num_cols = len(headers)
-    table = doc.add_table(rows=1 + len(rows), cols=num_cols)
-    table.style = 'Table Grid'
+def set_table_style(table):
+    """Style a table with blue header and alternating rows."""
+    # Set table alignment
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     
-    # 表头
-    for i, header in enumerate(headers):
-        cell = table.rows[0].cells[i]
-        cell.text = header
-        set_cell_shading(cell, '1A365D')
+    # Style header row
+    for cell in table.rows[0].cells:
+        shading = parse_xml(f'<w:shd {nsdecls("w")} w:fill="003366" w:val="clear"/>')
+        cell._tc.get_or_add_tcPr().append(shading)
         for paragraph in cell.paragraphs:
             for run in paragraph.runs:
-                run.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+                run.font.color.rgb = RGBColor(255, 255, 255)
                 run.font.bold = True
                 run.font.size = Pt(10)
     
-    # 数据行
-    for row_idx, row_data in enumerate(rows):
-        for col_idx, cell_text in enumerate(row_data):
-            if col_idx < num_cols:
-                cell = table.rows[row_idx + 1].cells[col_idx]
-                cell.text = cell_text
-                # 交替行颜色
-                if row_idx % 2 == 0:
-                    set_cell_shading(cell, 'F7FAFC')
-                for paragraph in cell.paragraphs:
-                    for run in paragraph.runs:
-                        run.font.size = Pt(10)
-    
-    doc.add_paragraph()  # 表格后空行
+    # Style data rows with alternating colors
+    for i, row in enumerate(table.rows[1:], 1):
+        color = "F2F7FB" if i % 2 == 0 else "FFFFFF"
+        for cell in row.cells:
+            shading = parse_xml(f'<w:shd {nsdecls("w")} w:fill="{color}" w:val="clear"/>')
+            cell._tc.get_or_add_tcPr().append(shading)
+            for paragraph in cell.paragraphs:
+                for run in paragraph.runs:
+                    run.font.size = Pt(10)
 
 
-def add_content_to_doc(doc, content, is_first_level=False):
-    """添加内容到文档"""
-    lines = content.split('\n')
-    in_table = False
-    table_lines = []
+def parse_markdown_table(lines, start_idx):
+    """Parse a markdown table starting at start_idx. Returns (table_data, end_idx)."""
+    table_data = []
+    idx = start_idx
     
-    for line in lines:
+    while idx < len(lines):
+        line = lines[idx].strip()
+        if not line.startswith('|'):
+            break
+        
+        # Skip separator line (|---|---|)
+        if re.match(r'^\|[\s\-:]+\|$', line):
+            idx += 1
+            continue
+        
+        # Parse row
+        cells = [cell.strip() for cell in line.split('|')[1:-1]]
+        if cells:
+            table_data.append(cells)
+        idx += 1
+    
+    return table_data, idx
+
+
+def process_markdown(doc, md_content):
+    """Process markdown content and add to document."""
+    lines = md_content.split('\n')
+    i = 0
+    
+    while i < len(lines):
+        line = lines[i]
         stripped = line.strip()
         
-        # 跳过空行
+        # Skip empty lines
         if not stripped:
-            if in_table and table_lines:
-                table_data = parse_table('\n'.join(table_lines))
-                if table_data:
-                    add_table_to_doc(doc, table_data)
-                table_lines = []
-                in_table = False
+            i += 1
             continue
         
-        # 检测表格
-        if '|' in stripped and stripped.startswith('|'):
-            in_table = True
-            table_lines.append(stripped)
+        # H1 heading
+        if stripped.startswith('# ') and not stripped.startswith('## '):
+            # Page break before H1 (except first one)
+            if len(doc.paragraphs) > 10:
+                doc.add_page_break()
+            
+            heading_text = stripped[2:].strip()
+            p = doc.add_heading(heading_text, level=1)
+            for run in p.runs:
+                run.font.color.rgb = RGBColor(0, 51, 102)
+            i += 1
             continue
         
-        if in_table and table_lines:
-            table_data = parse_table('\n'.join(table_lines))
-            if table_data:
-                add_table_to_doc(doc, table_data)
-            table_lines = []
-            in_table = False
+        # H2 heading
+        if stripped.startswith('## '):
+            heading_text = stripped[3:].strip()
+            p = doc.add_heading(heading_text, level=2)
+            for run in p.runs:
+                run.font.color.rgb = RGBColor(0, 76, 153)
+            i += 1
+            continue
         
-        # 普通文本
-        # 清理 Markdown 格式
+        # H3 heading
+        if stripped.startswith('### '):
+            heading_text = stripped[4:].strip()
+            p = doc.add_heading(heading_text, level=3)
+            for run in p.runs:
+                run.font.color.rgb = RGBColor(51, 102, 153)
+            i += 1
+            continue
+        
+        # H4 heading
+        if stripped.startswith('#### '):
+            heading_text = stripped[5:].strip()
+            p = doc.add_heading(heading_text, level=4)
+            i += 1
+            continue
+        
+        # Table
+        if stripped.startswith('|'):
+            table_data, end_idx = parse_markdown_table(lines, i)
+            if table_data and len(table_data) > 0:
+                # Create table
+                num_cols = max(len(row) for row in table_data)
+                table = doc.add_table(rows=len(table_data), cols=num_cols)
+                table.style = 'Table Grid'
+                
+                # Fill table
+                for row_idx, row_data in enumerate(table_data):
+                    for col_idx, cell_text in enumerate(row_data):
+                        if col_idx < num_cols:
+                            table.rows[row_idx].cells[col_idx].text = cell_text
+                
+                # Style table
+                try:
+                    set_table_style(table)
+                except Exception:
+                    pass  # Skip styling if it fails
+                
+                doc.add_paragraph()  # Space after table
+            i = end_idx
+            continue
+        
+        # Code block
+        if stripped.startswith('```'):
+            code_lines = []
+            i += 1
+            while i < len(lines) and not lines[i].strip().startswith('```'):
+                code_lines.append(lines[i])
+                i += 1
+            i += 1  # Skip closing ```
+            
+            # Add code as formatted paragraph
+            if code_lines:
+                p = doc.add_paragraph()
+                run = p.add_run('\n'.join(code_lines))
+                run.font.name = 'Consolas'
+                run.font.size = Pt(9)
+                run.font.color.rgb = RGBColor(51, 51, 51)
+                # Add light gray background
+                shading = parse_xml(f'<w:shd {nsdecls("w")} w:fill="F5F5F5" w:val="clear"/>')
+                p._p.get_or_add_pPr().append(shading)
+            continue
+        
+        # Bullet points
+        if stripped.startswith('- ') or stripped.startswith('* '):
+            text = stripped[2:].strip()
+            p = doc.add_paragraph(text, style='List Bullet')
+            i += 1
+            continue
+        
+        # Numbered list
+        if re.match(r'^\d+\.\s', stripped):
+            text = re.sub(r'^\d+\.\s', '', stripped)
+            p = doc.add_paragraph(text, style='List Number')
+            i += 1
+            continue
+        
+        # Blockquote
+        if stripped.startswith('> '):
+            text = stripped[2:].strip()
+            p = doc.add_paragraph()
+            p.paragraph_format.left_indent = Cm(1)
+            run = p.add_run(text)
+            run.font.italic = True
+            run.font.color.rgb = RGBColor(102, 102, 102)
+            i += 1
+            continue
+        
+        # Horizontal rule
+        if stripped in ['---', '***', '___']:
+            p = doc.add_paragraph()
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            run = p.add_run('─' * 50)
+            run.font.color.rgb = RGBColor(200, 200, 200)
+            i += 1
+            continue
+        
+        # Checkbox list
+        if stripped.startswith('- [ ]') or stripped.startswith('- [x]'):
+            text = stripped[5:].strip()
+            checked = '[x]' in stripped[:5]
+            prefix = '☑' if checked else '☐'
+            p = doc.add_paragraph(f'{prefix} {text}')
+            i += 1
+            continue
+        
+        # Regular paragraph
+        # Handle inline formatting
         text = stripped
-        text = re.sub(r'\*\*(.+?)\*\*', r'\1', text)  # 去除加粗
-        text = re.sub(r'\*(.+?)\*', r'\1', text)  # 去除斜体
-        text = re.sub(r'`(.+?)`', r'\1', text)  # 去除代码
-        text = re.sub(r'\[(.+?)\]\(.+?\)', r'\1', text)  # 去除链接
+        p = doc.add_paragraph()
         
-        # 跳过代码块标记
-        if text.startswith('```'):
-            continue
+        # Simple inline formatting handling
+        # Bold: **text** or __text__
+        # Italic: *text* or _text_
+        # Code: `text`
         
-        # 检测列表项
-        list_match = re.match(r'^[-*]\s+(.+)$', text)
-        numbered_match = re.match(r'^\d+\.\s+(.+)$', text)
+        parts = re.split(r'(\*\*.*?\*\*|__.*?__|`.*?`|\*.*?\*|_.*?_)', text)
+        for part in parts:
+            if part.startswith('**') and part.endswith('**'):
+                run = p.add_run(part[2:-2])
+                run.font.bold = True
+            elif part.startswith('__') and part.endswith('__'):
+                run = p.add_run(part[2:-2])
+                run.font.bold = True
+            elif part.startswith('`') and part.endswith('`'):
+                run = p.add_run(part[1:-1])
+                run.font.name = 'Consolas'
+                run.font.size = Pt(9)
+                run.font.color.rgb = RGBColor(199, 37, 78)
+            elif part.startswith('*') and part.endswith('*'):
+                run = p.add_run(part[1:-1])
+                run.font.italic = True
+            elif part.startswith('_') and part.endswith('_'):
+                run = p.add_run(part[1:-1])
+                run.font.italic = True
+            else:
+                run = p.add_run(part)
         
-        if list_match or numbered_match:
-            p = doc.add_paragraph(style='List Bullet')
-            p.add_run(list_match.group(1) if list_match else numbered_match.group(1))
+        i += 1
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Convert TRIZ Markdown report to Word')
+    parser.add_argument('input', help='Input Markdown file')
+    parser.add_argument('output', help='Output Word file')
+    parser.add_argument('--author', default='TRIZ Innovation Toolkit', help='Author name')
+    parser.add_argument('--title', default=None, help='Report title (auto-detected from H1 if not set)')
+    parser.add_argument('--subtitle', default='TRIZ 系统化创新分析报告', help='Report subtitle')
+    
+    args = parser.parse_args()
+    
+    input_path = Path(args.input)
+    if not input_path.exists():
+        print(f'Error: Input file not found: {input_path}')
+        sys.exit(1)
+    
+    # Read markdown content
+    md_content = input_path.read_text(encoding='utf-8')
+    
+    # Auto-detect title from first H1 if not specified
+    title = args.title
+    if not title:
+        match = re.search(r'^#\s+(.+)$', md_content, re.MULTILINE)
+        if match:
+            title = match.group(1).strip()
         else:
-            p = doc.add_paragraph(text)
-            p.paragraph_format.space_after = Pt(6)
-            p.paragraph_format.line_spacing = 1.5
-
-
-def md_to_word(md_file, output_file, title=None, author=None, date=None):
-    """将 Markdown 文件转换为 Word 文档"""
+            title = input_path.stem
     
-    # 读取 Markdown 文件
-    with open(md_file, 'r', encoding='utf-8') as f:
-        md_content = f.read()
-    
-    # 创建文档
+    # Create document
     doc = Document()
     
-    # 设置默认字体
-    style = doc.styles['Normal']
-    font = style.font
-    font.name = 'Arial'
-    font.size = Pt(11)
-    
-    # 设置页面边距
+    # Set margins
     for section in doc.sections:
         section.top_margin = Cm(2.54)
         section.bottom_margin = Cm(2.54)
         section.left_margin = Cm(3.18)
         section.right_margin = Cm(3.18)
     
-    # 获取标题
-    if not title:
-        # 从文件名提取
-        basename = os.path.basename(md_file)
-        title = basename.replace('_完整版.md', '').replace('TRIZ_报告_', '').replace('TRIZ_创新分析报告_', '')
-        title = f'TRIZ 创新分析报告\n{title}'
+    # Set default font
+    style = doc.styles['Normal']
+    font = style.font
+    font.name = 'Microsoft YaHei'  # 微软雅黑 for Chinese
+    font.size = Pt(11)
     
-    if not author:
-        author = ''
+    # Create cover page
+    from datetime import datetime
+    date_str = datetime.now().strftime('%Y年%m月%d日')
+    create_cover_page(doc, title, args.subtitle, args.author, date_str)
     
-    if not date:
-        date = datetime.now().strftime('%Y年%m月%d日')
-    
-    # 添加封面页
-    add_cover_page(doc, title, 'TRIZ 系统化创新分析报告', author, date)
-    
-    # 添加目录页
+    # Add TOC
     add_toc(doc)
     
-    # 解析并添加内容
-    sections = parse_markdown(md_content)
+    # Process markdown content
+    process_markdown(doc, md_content)
     
-    for i, section in enumerate(sections):
-        level = section['level']
-        title = section['title']
-        content = section['content']
-        
-        # 一级标题前分页
-        if level == 1 and i > 0:
-            doc.add_page_break()
-        
-        # 添加标题（使用内置Heading样式，确保TOC能识别）
-        heading = doc.add_heading(title, level=level)
-        for run in heading.runs:
-            run.font.color.rgb = RGBColor(0x1A, 0x36, 0x5D)
-        
-        # 添加内容
-        add_content_to_doc(doc, content, is_first_level=(level == 1))
+    # Save document
+    output_path = Path(args.output)
+    doc.save(str(output_path))
     
-    # 保存文档
-    doc.save(output_file)
-    print(f'✅ Word 文档已生成: {output_file}')
-    
-    return output_file
-
-
-def main():
-    if len(sys.argv) < 2:
-        print('用法: python triz_md_to_docx.py <input.md> [output.docx] [--author "作者"] [--title "标题"] [--date "日期"]')
-        sys.exit(1)
-    
-    input_file = sys.argv[1]
-    
-    # 解析参数
-    output_file = None
-    title = None
-    author = None
-    date = None
-    
-    i = 2
-    while i < len(sys.argv):
-        if sys.argv[i] == '--title' and i + 1 < len(sys.argv):
-            title = sys.argv[i + 1]
-            i += 2
-        elif sys.argv[i] == '--author' and i + 1 < len(sys.argv):
-            author = sys.argv[i + 1]
-            i += 2
-        elif sys.argv[i] == '--date' and i + 1 < len(sys.argv):
-            date = sys.argv[i + 1]
-            i += 2
-        elif not output_file:
-            output_file = sys.argv[i]
-            i += 1
-        else:
-            i += 1
-    
-    if not output_file:
-        output_file = input_file.replace('.md', '.docx')
-    
-    md_to_word(input_file, output_file, title, author, date)
+    size = output_path.stat().st_size
+    print(f'Done: {output_path} ({size / 1024:.1f} KB)')
+    print(f'Note: Open in Word and right-click TOC → "Update Field" to generate directory')
 
 
 if __name__ == '__main__':
